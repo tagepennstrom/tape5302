@@ -8,9 +8,11 @@ int input = atoi(argv[1]);
 int x;
 int y;
 int prime = 0;
-for(x = 2; x <= input/2; x++)
+float tmp = sqrt(input);
+int limit = floor(tmp) + 1;
+for(x = 2; x <= limit; x++)
     {
-    for(y = 2; y <= x-1; y++)
+    for(y = 2; y <= input/2; y++)
         {
             if (x * y == input)
             {
