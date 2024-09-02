@@ -1,26 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 int main(int argc, char *argv[])
 {
-int i;
-int j;
-int n = 1;
-int count = 0; 
-int staplar = atoi(argv[1]);
-int okning = atoi(argv[2]);
-int okning2 = okning;
-
-    for (i = 1; i <= staplar; i++)
+int input = atoi(argv[1]);
+int x;
+int y;
+int prime = 0;
+for(x = 2; x <= input/2; x++)
     {
-        for (j = 1; j <= okning; j++)
-        { 
-            printf("*");
+    for(y = 2; y <= x-1; y++)
+        {
+            if (x * y == input)
+            {
+                printf("%d är inte ett primtal\n", input);
+                return 0;
+            }
+            else;
+            {}
         }
-        printf("\n");           //Bryter raden
-        count += okning;             //räknar
-        okning += okning2;            //ökar n
     }
-printf("Totalt; %d\n", count);    
+printf("%d är ett primtal\n", input);
 return 0;
 }
