@@ -1,4 +1,6 @@
-#include "utils.h"
+#ifndef __UTILS_H__
+#define __UTILS_H__
+
 #include <stdio.h>
 
 void clear_input_buffer(void)
@@ -57,3 +59,5 @@ char *ask_question_string(char *question, char *buf, int buf_siz)
     }
     return buf;  
 }
+
+#endif
