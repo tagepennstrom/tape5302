@@ -52,8 +52,8 @@ char *ask_question_string(char *question, char *buf, int buf_siz)
     int result = 0;
     while(result == 0)
     {
-    printf("%s\n", question);
-    result = read_string(buf, buf_siz);
+        printf("%s\n", question);
+        result = read_string(buf, buf_siz);
     }
     return buf;  
 }
