@@ -8,17 +8,28 @@ bool is_number(char *str)
 {
   int length = strlen(str);
   int i;
-  for(i = 0; i < length; i++)
+  if (str[0] == '-' || isdigit(str[0]))
   {
-    if (!isdigit(str[i]) && (str[0]) != '-')
-        {
+   for (i = 1; i < length; i++)
+     {
+        if (isdigit(str[i]))
+          {
+            continue;
+          }
+          else
+          {
             return false;
-        }
-
+          }
+      }
+      if (str[0] == '-' && length == 1)
+      {
+        return false;
+      }
   }
-
   return true;
 }
+
+
 
 
 int main(int argc, char *argv[])
