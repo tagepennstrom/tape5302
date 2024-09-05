@@ -71,4 +71,3 @@ void println(char *str)
     print(str);
     putchar(radbrytning);
 }
-
