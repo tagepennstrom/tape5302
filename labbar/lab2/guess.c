@@ -8,7 +8,7 @@ int main(void)
     char buf[buf_siz];
     int tal = random () % 1001;
     int spel = 1;
-    int tries = 0;
+    int tries = 1;
     int guess;
     char *namn;
 
@@ -18,7 +18,7 @@ int main(void)
         namn = ask_question_string("Skriv in ditt namn", buf, buf_siz);
         printf("Du %s, jag tänker på ett tal ... " , namn);
         guess = ask_question_int("kan du gissa vilket?");
-        while (tries <= 13 && guess != tal)
+        while (tries <= 14 && guess != tal)
         {
             if (guess < tal)
             {
@@ -35,12 +35,12 @@ int main(void)
         if (tal == guess)
         {
             spel = 0;
-            printf("Bingo!\nDet tog %s %d gissningar att komma fram till %d", namn, tries, tal);
+            printf("Bingo!\nDet tog %s %d gissningar att komma fram till %d\n", namn, tries, tal);
         }
         else
         {
             spel = 0;
-            printf("Ajdå!\nNu har du slut på gissningar! Jag tänkte på %d!", tal);
+            printf("Ajdå!\nNu har du slut på gissningar! Jag tänkte på %d!\n", tal);
         }
     }
     return 0;
