@@ -6,27 +6,33 @@
 
 bool is_number(char *str)
 {
-  int length = strlen(str);
-  int i;
-  if (str[0] == '-' || isdigit(str[0]))
-  {
-   for (i = 1; i < length; i++)
-     {
-        if (isdigit(str[i]))
-          {
-            continue;
-          }
-          else
-          {
-            return false;
-          }
-      }
-      if (str[0] == '-' && length == 1)
-      {
+    int length = strlen(str);
+    bool decimal = false;
+
+    if (length == 0) 
+    {
         return false;
-      }
-  }
-  return true;
+    }
+    if ((str[0] == '-' || !isdigit(str[0])) && length == 1)
+    {
+        return false;
+    }
+    for(int i = 1; i < length; i++)
+    {
+        if (!isdigit(str[i]))
+        {
+            if (str[i] == '.' && !decimal)
+            {
+                decimal = true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+    }
+    return true;
 }
 
 

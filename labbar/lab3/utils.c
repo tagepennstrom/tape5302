@@ -1,5 +1,58 @@
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+#include <ctype.h>
+#include <string.h>
+
+extern char *strdup(const char*);
+
+bool is_number(char *str)
+{
+    int length = strlen(str);
+    bool decimal = false;
+
+    if (length == 0) 
+    {
+        return false;
+    }
+    if ((str[0] == '-' || !isdigit(str[0])) && length == 1)
+    {
+        return false;
+    }
+    for(int i = 1; i < length; i++)
+    {
+        if (!isdigit(str[i]))
+        {
+            if (str[i] == '.' && !decimal)
+            {
+                decimal = true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+    }
+    return true;
+}
+
+bool is_float(char *str)
+{
+    float num = atof(str);
+    if (!is_number(str))
+    {
+        return false;
+    }
+    return floor(num) != num;
+}
+
+bool not_empty(char *str)
+{
+    return strlen(str) > 0;
+}
 
 void clear_input_buffer(void)
 {
@@ -10,19 +63,30 @@ void clear_input_buffer(void)
     } while (c != '\n' && c != EOF);
 }
 
-int ask_question_int(char *question)
+answer_t make_float(char *str)
 {
-    int result;
-    int conversions;
+  answer_t a;                // skapa ett oinitierat answer_t-värde
+  a.float_value = atof(str); // gör det till en float, via atof
+  return a;                  // returnera värdet
+}
+
+answer_t ask_question(char *question, check_func *check, convert_func *convert)
+{
+    int buf_siz = 255;
+    char buf[buf_siz];
     do
     {
-        printf("%s\n", question);
-        conversions = scanf("%d", &result);
-        clear_input_buffer();
-        putchar('\n');
-    }
-    while (conversions < 1);
-    return result;
+        printf("%s", question);
+        read_string(buf, buf_siz);
+    } while (!check(buf));
+
+    return convert(buf);
+}
+
+int ask_question_int(char *question) // från studium
+{
+  answer_t answer = ask_question(question, is_number, (convert_func *) atoi);
+  return answer.int_value; // svaret som ett heltal
 }
 
 int read_string(char *buf, int buf_siz)
@@ -47,15 +111,9 @@ int read_string(char *buf, int buf_siz)
     return counter;
 }
 
-char *ask_question_string(char *question, char *buf, int buf_siz)
+char *ask_question_string(char *question)
 {
-    int result = 0;
-    while(result == 0)
-    {
-        printf("%s\n", question);
-        result = read_string(buf, buf_siz);
-    }
-    return buf;  
+  return ask_question(question, not_empty, (convert_func *) strdup).string_value;
 }
 
 void print(char *str)
@@ -71,3 +129,5 @@ void println(char *str)
     print(str);
     putchar(radbrytning);
 }
+
+

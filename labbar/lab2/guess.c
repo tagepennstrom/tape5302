@@ -15,19 +15,19 @@ int main(void)
 
     while (spel == 1)
     {
-        namn = ask_question_string("Skriv in ditt namn", buf, buf_siz);
+        namn = ask_question_string("Skriv in ditt namn\n");
         printf("Du %s, jag tänker på ett tal ... " , namn);
-        guess = ask_question_int("kan du gissa vilket?");
+        guess = ask_question_int("kan du gissa vilket?\n");
         while (tries <= 14 && guess != tal)
         {
             if (guess < tal)
             {
-            guess = ask_question_int("Högre");
+            guess = ask_question_int("Högre\n");
             tries += 1;
             }
             else
             {
-            guess = ask_question_int("Lägre");
+            guess = ask_question_int("Lägre\n");
             tries += 1;
             }
 
