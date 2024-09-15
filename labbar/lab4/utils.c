@@ -44,6 +44,29 @@ bool is_number(char *str)
     return true;
 }
 
+bool is_shelf(char *str)
+{
+    int length = strlen(str);
+    
+    if (length < 2) 
+    {
+        return false;
+    }
+    if (!isupper(str[0]))
+    {
+        return false;
+    }
+    
+    for(int i = 1; i < length; i++)
+    {
+        if (!isdigit(str[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool is_float(char *str)
 {
     float num = atof(str);
@@ -127,6 +150,12 @@ void print(char *str)
         putchar(str[i]);
     return;
 }
+
+char* ask_question_shelf(char *question)
+{
+    return ask_question(question, is_shelf, (convert_func *) strdup).string_value;
+}
+
 
 void println(char *str)
 {
