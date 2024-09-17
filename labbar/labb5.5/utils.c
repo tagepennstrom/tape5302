@@ -11,6 +11,7 @@ extern char *strdup(const char*);
 bool is_number(char *str)
 {
     int length = strlen(str);
+    bool decimal = false;
 
     if (length == 0) 
     {
@@ -29,11 +30,17 @@ bool is_number(char *str)
     {
         if (!isdigit(str[i]))
         {
-            return false;
-        } 
-    
-    }
+            if (str[i] == '.' && !decimal)
+            {
+                decimal = true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
+    }
     return true;
 }
 
