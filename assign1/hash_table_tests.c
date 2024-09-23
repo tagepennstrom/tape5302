@@ -30,6 +30,16 @@ void test_create_destroy()
    ioopm_hash_table_destroy(ht);
 }
 
+void test_insert_once()
+{
+    ioopm_hash_table_t *h = ioopm_hash_table_create();
+    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(h, 1));
+    ioopm_hash_table_insert(h, 1, "cow");
+    CU_ASSERT_PTR_NOT_NULL(ioopm_hash_table_lookup(h, 1));
+    ioopm_hash_table_destroy(h);
+}
+
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -39,9 +49,9 @@ int main() {
   // the init and cleanup functions
   CU_pSuite my_test_suite = CU_add_suite("My awesome test suite", init_suite, clean_suite);
   if (my_test_suite == NULL) {
-      // If the test suite could not be added, tear down CUnit and exit
-      CU_cleanup_registry();
-      return CU_get_error();
+// If the test suite could not be added, tear down CUnit and exit
+    CU_cleanup_registry();
+    return CU_get_error();
   }
 
   // This is where we add the test functions to our test suite.
@@ -52,6 +62,8 @@ int main() {
   if (
     (CU_add_test(my_test_suite, "A simple test", test1) == NULL) ||
     (CU_add_test(my_test_suite, "Basic arithmetics", test2) == NULL) ||
+    (CU_add_test(my_test_suite, "Create and destroy test", test_create_destroy) == NULL) ||
+    (CU_add_test(my_test_suite, "Insert Once", test_insert_once) == NULL) ||
     0
   )
     {
