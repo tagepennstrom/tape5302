@@ -23,7 +23,18 @@ ioopm_hash_table_t *ioopm_hash_table_create()
     return result;
 }
 
-void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
+void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
+{
+    for (int i = 0; i < 17; i++)
+    {
+        entry_t *entry = ht->buckets[i].next;
+        while (entry != NULL)
+        {
+            entry_t *next_entry = entry->next;
+            free(entry);
+            entry = next_entry;
+        }
+    }
     free(ht);
 }
 
