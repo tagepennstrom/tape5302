@@ -33,12 +33,21 @@ void test_create_destroy()
 void test_insert_once()
 {
     ioopm_hash_table_t *h = ioopm_hash_table_create();
-    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(h, 1));
-    ioopm_hash_table_insert(h, 1, "cow");
-    CU_ASSERT_PTR_NOT_NULL(ioopm_hash_table_lookup(h, 1));
+    CU_ASSERT_FALSE(ioopm_hash_table_lookup(h, 18).success);
+    ioopm_hash_table_insert(h, 18, "cow");
+    CU_ASSERT_TRUE(ioopm_hash_table_lookup(h, 18).success);
     ioopm_hash_table_destroy(h);
 }
 
+void test_lookup_empty()
+{
+   ioopm_hash_table_t *ht = ioopm_hash_table_create();
+   for (int i = 0; i < 18; ++i) /// 18 is a bit magical
+     {
+       CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, i).success);
+     }
+   ioopm_hash_table_destroy(ht);
+}
 
 int main() {
   // First we try to set up CUnit, and exit if we fail
@@ -64,6 +73,8 @@ int main() {
     (CU_add_test(my_test_suite, "Basic arithmetics", test2) == NULL) ||
     (CU_add_test(my_test_suite, "Create and destroy test", test_create_destroy) == NULL) ||
     (CU_add_test(my_test_suite, "Insert Once", test_insert_once) == NULL) ||
+    (CU_add_test(my_test_suite, "Look-up empty", test_lookup_empty) == NULL) ||
+
     0
   )
     {
@@ -83,5 +94,6 @@ int main() {
   CU_cleanup_registry();
   return CU_get_error();
 } 
+
 
 
