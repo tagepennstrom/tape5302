@@ -79,6 +79,44 @@ void test_remove() {
   ioopm_hash_table_destroy(ht);
 }
 
+void test_ioopm_hash_table_size(){
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    ioopm_hash_table_insert(ht, 1, "Apa");
+    ioopm_hash_table_insert(ht, 2, "Giraff");
+    ioopm_hash_table_insert(ht, 3, "Lejon");
+    CU_ASSERT_TRUE(ioopm_hash_table_size(ht) == 3);
+    ioopm_hash_table_destroy(ht);
+}
+
+void test_is_empty() {
+    int key1 = 0;
+    char *value1 = "Hej";
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    bool result = ioopm_hash_table_is_empty(ht);
+    CU_ASSERT_TRUE(result);
+
+    ioopm_hash_table_insert(ht, key1, value1);
+
+    result = ioopm_hash_table_is_empty(ht);
+    CU_ASSERT_FALSE(result);
+
+    ioopm_hash_table_destroy(ht);
+}
+
+void test_clear_ht() {
+    int key1 = 1;
+    char *value1 = "176";
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();  
+    ioopm_hash_table_insert(ht, key1, value1);
+    bool result = ioopm_hash_table_is_empty(ht);
+    CU_ASSERT_FALSE(result);
+
+    ioopm_hash_table_clear(ht);
+    result = ioopm_hash_table_is_empty(ht);
+    CU_ASSERT_TRUE(result);
+
+    ioopm_hash_table_destroy(ht);
+}
 
 int main() {
   // First we try to set up CUnit, and exit if we fail
@@ -103,6 +141,9 @@ int main() {
     (CU_add_test(my_test_suite, "Create Destroy", test_create_destroy) == NULL) ||
     (CU_add_test(my_test_suite, "insert", test_insert_once) == NULL) ||
     (CU_add_test(my_test_suite, "remove", test_remove) == NULL) ||
+    (CU_add_test(my_test_suite, "Hashtable Size", test_ioopm_hash_table_size) == NULL) ||
+    (CU_add_test(my_test_suite, "Is empty", test_is_empty) == NULL) ||
+    (CU_add_test(my_test_suite, "Clear HT", test_clear_ht) == NULL) ||
 
 
     0

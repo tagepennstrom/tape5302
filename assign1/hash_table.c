@@ -54,18 +54,23 @@ ioopm_hash_table_t *ioopm_hash_table_create() {
   return result;
 }
 
-void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
-  for(int i = 0; i < No_Buckets; i++) {
-    entry_t *current = ht->buckets[i].next;
-
-    while(current != NULL) {
-    entry_t *next_entry = current->next;
-    free(current);
-    current = next_entry;
+void ioopm_hash_table_clear(ioopm_hash_table_t *ht) {
+    for(int i = 0; i < No_Buckets; i++)
+    {
+        entry_t *current = ht->buckets[i].next;
+        while(current != NULL) 
+        {
+            entry_t *next_entry = current->next;
+            free(current);
+            current = next_entry;
+        }
+    ht->buckets[i].next = NULL;
     }
+}
 
-  }
-  free(ht); 
+void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
+    ioopm_hash_table_clear(ht);
+    free(ht);
 }
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value) {
@@ -119,4 +124,23 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key) {
  
     return removed_value;
   }
+}
+int ioopm_hash_table_size(ioopm_hash_table_t *ht) {
+  int counter = 0;
+  for(int i = 0; i < No_Buckets; i++) {
+    entry_t *current = ht->buckets[i].next;
+    while(current != NULL) {
+    entry_t *next_entry = current->next;
+    counter += 1;
+    current = next_entry;
+    }
+
+  }
+  return counter;
+}
+
+
+bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
+{
+  return ioopm_hash_table_size(ht) == 0;
 }
