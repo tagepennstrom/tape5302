@@ -60,7 +60,7 @@ void test_insert_once() {
 
 void test_remove() {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
-  int key = 0;
+  int key = 2313;
   char *value = "10";
 
   ioopm_hash_table_remove(ht, key);
