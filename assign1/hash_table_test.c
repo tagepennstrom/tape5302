@@ -2,6 +2,8 @@
 #include "hash_table.h"
 #include <stdbool.h>
 #include <CUnit/Basic.h>
+#include <stdlib.h>
+
 
 typedef struct entry entry_t;
 
@@ -118,6 +120,107 @@ void test_clear_ht() {
     ioopm_hash_table_destroy(ht);
 }
 
+void test_keys() {
+  int keys[6] = {3, 10, 42, 0, 99};
+  bool found[6] = {false};
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();  
+  ioopm_hash_table_insert(ht, keys[0], "1");
+  ioopm_hash_table_insert(ht, keys[1], "2");
+  ioopm_hash_table_insert(ht, keys[2], "3");
+  ioopm_hash_table_insert(ht, keys[3], "4");
+  ioopm_hash_table_insert(ht, keys[4], "5");
+  int *result = ioopm_hash_table_keys(ht);
+
+  for(int i = 0; i < 5; i++) {
+
+    for(int j = 0; j < 5; j++) {
+
+        if (result[j] == keys[i]) {
+          found[i] = true;
+          break;
+        }
+        else if (j == 4) {
+          CU_FAIL("Found a key that was never inserted!");
+        }
+    }
+  }
+  free(result);
+  for(int i = 0; i < ioopm_hash_table_size(ht); i++) {
+    if (found[i] != true) {
+      CU_FAIL("Keys do not match");
+    }
+  }
+  ioopm_hash_table_destroy(ht);
+  CU_ASSERT_TRUE(found[1]);
+}
+
+void test_values() {
+  int keys[5] = {3, 10, 42, 0, 99};
+  char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
+  bool found[5] = {false};
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();  
+  ioopm_hash_table_insert(ht, keys[0], values[0]);
+  ioopm_hash_table_insert(ht, keys[1], values[1]);
+  ioopm_hash_table_insert(ht, keys[2], values[2]);
+  ioopm_hash_table_insert(ht, keys[3], values[3]);
+  ioopm_hash_table_insert(ht, keys[4], values[4]);
+  char **result = ioopm_hash_table_values(ht);
+
+  for(int i = 0; i < 5; i++) {
+
+    for(int j = 0; j < 5; j++) {
+
+        if (result[j] == values[i]) {
+          found[i] = true;
+          break;
+        }
+        else if (j == 4) {
+          CU_FAIL("Found a key that was never inserted!");
+        }
+    }
+  }
+  free(result);
+  for(int i = 0; i < ioopm_hash_table_size(ht); i++) {
+    if (found[i] != true) {
+      CU_FAIL("Keys do not match");
+    }
+  }
+  ioopm_hash_table_destroy(ht);
+  CU_ASSERT_TRUE(found[1]);
+}
+
+
+void test_keys_and_values() {
+  int keys[5] = {3, 10, 42, 0, 99};
+  char *values[5] = {"three", "ten", "fortytwo", "zero", "ninetynine"};
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();  
+  ioopm_hash_table_insert(ht, keys[0], values[0]);
+  ioopm_hash_table_insert(ht, keys[1], values[1]);
+  ioopm_hash_table_insert(ht, keys[2], values[2]);
+  ioopm_hash_table_insert(ht, keys[3], values[3]);
+  ioopm_hash_table_insert(ht, keys[4], values[4]);
+  int *result_k = ioopm_hash_table_keys(ht);
+  char **result_v = ioopm_hash_table_values(ht);
+
+    for(int i = 0; i < 5; i++) 
+    {
+        for(int j = 0; j < 5; j++) {
+            if (result_k[j] == keys[i])
+            {
+                CU_ASSERT_TRUE(result_v[j] == values[i]);
+                break;
+            }
+            else if (j == 4) {
+            CU_FAIL("Found a key that was never inserted!");
+            }
+        
+        }
+    }
+  free(result_k);
+  free(result_v);
+  ioopm_hash_table_destroy(ht);
+}
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -144,8 +247,9 @@ int main() {
     (CU_add_test(my_test_suite, "Hashtable Size", test_ioopm_hash_table_size) == NULL) ||
     (CU_add_test(my_test_suite, "Is empty", test_is_empty) == NULL) ||
     (CU_add_test(my_test_suite, "Clear HT", test_clear_ht) == NULL) ||
-
-
+    (CU_add_test(my_test_suite, "Keys", test_keys) == NULL) ||
+    (CU_add_test(my_test_suite, "Values", test_values) == NULL) ||
+    (CU_add_test(my_test_suite, "Keys and values", test_keys_and_values) == NULL) ||
     0
   )
     {

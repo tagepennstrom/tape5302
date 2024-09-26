@@ -140,7 +140,48 @@ int ioopm_hash_table_size(ioopm_hash_table_t *ht) {
 }
 
 
+
 bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
 {
   return ioopm_hash_table_size(ht) == 0;
+}
+
+int *ioopm_hash_table_keys(ioopm_hash_table_t *ht) {
+  int size = ioopm_hash_table_size(ht);
+  int *keys = calloc(size , sizeof(int));
+  int keyindex = 0;
+
+  for(int i = 0; i < No_Buckets; i++) {
+    entry_t *current = ht->buckets[i].next;
+    while(current != NULL) {
+
+      if (keyindex < size) {
+        keys[keyindex] = current->key;
+        keyindex++;
+      }
+      if (keyindex == size - 1) {
+        break;
+      }
+      entry_t *next_entry = current->next;
+      current = next_entry;
+    }
+  }
+  return keys;
+}
+
+char **ioopm_hash_table_values(ioopm_hash_table_t *ht) {
+    char **values = calloc(ioopm_hash_table_size(ht), sizeof(char *));
+
+    int valueindex = 0;
+
+    for(int i = 0; i < No_Buckets; i++) {
+        entry_t *current = ht->buckets[i].next;
+        while(current != NULL) {
+            entry_t *next_entry = current->next;
+            values[valueindex] = current->value;
+            valueindex++;
+            current = next_entry;
+        }
+    }
+    return values;
 }
