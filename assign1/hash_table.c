@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #define No_Buckets 17
 typedef struct entry entry_t;
 
@@ -74,26 +75,26 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
 }
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value) {
-  /// Calculate the bucket for this entry
-  int bucket = key % No_Buckets;
-  /// Search for an existing entry for a key
-  entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
-  entry_t *next = entry->next;
+    /// Calculate the bucket for this entry
+    int bucket = abs(key) % No_Buckets;
+    /// Search for an existing entry for a key
+    entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+    entry_t *next = entry->next;
 
-  /// Check if the next entry should be updated or not
-  if (next != NULL && next->key == key)
-    {
-      next->value = value;
-    }
-  else
-    {
-      entry->next = entry_create(key, value, next);
-    }
+    /// Check if the next entry should be updated or not
+    if (next != NULL && next->key == key)
+        {
+        next->value = value;
+        }
+    else
+        {
+        entry->next = entry_create(key, value, next);
+        }
 }
 
 ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key) {
   /// Find the previous entry for key
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[key % No_Buckets], key);
+  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[abs(key) % No_Buckets], key);
   entry_t *next = tmp->next;
 
   if (next && next->value) {
@@ -107,7 +108,7 @@ ioopm_option_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key) {
 
 char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key) {
 
-  entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[key % No_Buckets], key);
+  entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[abs(key) % No_Buckets], key);
   entry_t *entry = prev_entry->next;
   
   ioopm_option_t result = ioopm_hash_table_lookup(ht, key);
@@ -184,4 +185,21 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht) {
         }
     }
     return values;
+}
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
+
+  for(int i = 0; i < No_Buckets; i++) {
+      entry_t *current = ht->buckets[i].next;
+      while(current != NULL) {
+        entry_t *next_entry = current->next;
+        char *str = current->value;
+        if (!strcmp(value, str)) {
+
+          return true;
+        }
+        current = next_entry;
+      }
+  }
+  return false;
 }

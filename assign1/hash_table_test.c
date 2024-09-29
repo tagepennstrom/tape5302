@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <CUnit/Basic.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 typedef struct entry entry_t;
@@ -46,6 +47,23 @@ void test_create_destroy()
 void test_insert_once() {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   int key = 31495;
+  char *value = "10";
+
+  ioopm_option_t result = ioopm_hash_table_lookup(ht, key);
+  CU_ASSERT_FALSE(result.success);
+
+  ioopm_hash_table_insert(ht, key, value);
+  result = ioopm_hash_table_lookup(ht, key);
+  CU_ASSERT_TRUE(result.success);
+
+  CU_ASSERT_STRING_EQUAL(result.value, value);
+
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_insert_neg() {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int key = -4;
   char *value = "10";
 
   ioopm_option_t result = ioopm_hash_table_lookup(ht, key);
@@ -221,6 +239,29 @@ void test_keys_and_values() {
   ioopm_hash_table_destroy(ht);
 }
 
+void test_has_value() {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();  
+  int key1 = 5;
+  char *value1 = "Hej";
+  char *value1_dup = strdup(value1);
+  char *value2 = "Då";
+  bool result = ioopm_hash_table_has_value(ht, value1);
+  CU_ASSERT_FALSE(result);
+
+  ioopm_hash_table_insert(ht, key1, value1);
+  result = ioopm_hash_table_has_value(ht, value1);
+  CU_ASSERT_TRUE(result);
+
+  bool result_dup = ioopm_hash_table_has_value(ht, value1_dup);
+  CU_ASSERT_TRUE(result_dup);
+
+  result = ioopm_hash_table_has_value(ht, value2);
+  CU_ASSERT_FALSE(result);
+
+  free(value1_dup);
+  ioopm_hash_table_destroy(ht);
+} 
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -243,6 +284,7 @@ int main() {
   if (
     (CU_add_test(my_test_suite, "Create Destroy", test_create_destroy) == NULL) ||
     (CU_add_test(my_test_suite, "insert", test_insert_once) == NULL) ||
+    (CU_add_test(my_test_suite, "insert neg", test_insert_neg) == NULL) ||
     (CU_add_test(my_test_suite, "remove", test_remove) == NULL) ||
     (CU_add_test(my_test_suite, "Hashtable Size", test_ioopm_hash_table_size) == NULL) ||
     (CU_add_test(my_test_suite, "Is empty", test_is_empty) == NULL) ||
@@ -250,6 +292,7 @@ int main() {
     (CU_add_test(my_test_suite, "Keys", test_keys) == NULL) ||
     (CU_add_test(my_test_suite, "Values", test_values) == NULL) ||
     (CU_add_test(my_test_suite, "Keys and values", test_keys_and_values) == NULL) ||
+    (CU_add_test(my_test_suite, "Has value", test_has_value) == NULL) ||
     0
   )
     {
