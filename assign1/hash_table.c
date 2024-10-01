@@ -203,3 +203,8 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
   }
   return false;
 }
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key) {
+  ioopm_option_t result = ioopm_hash_table_lookup(ht, key);
+  return result.success == true;
+}

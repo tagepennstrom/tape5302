@@ -262,6 +262,20 @@ void test_has_value() {
   ioopm_hash_table_destroy(ht);
 } 
 
+void test_has_key() {
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();  
+  int key1 = 5;
+  int key2 = 6;
+  bool result = ioopm_hash_table_has_key(ht, key1);
+  CU_ASSERT_FALSE(result);
+  ioopm_hash_table_insert(ht, key1, "5");
+  result = ioopm_hash_table_has_key(ht, key1);
+  CU_ASSERT_TRUE(result);
+  result = ioopm_hash_table_has_key(ht, key2);
+  CU_ASSERT_FALSE(result);
+  ioopm_hash_table_destroy(ht);
+}
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -292,7 +306,8 @@ int main() {
     (CU_add_test(my_test_suite, "Keys", test_keys) == NULL) ||
     (CU_add_test(my_test_suite, "Values", test_values) == NULL) ||
     (CU_add_test(my_test_suite, "Keys and values", test_keys_and_values) == NULL) ||
-    (CU_add_test(my_test_suite, "Has value", test_has_value) == NULL) ||
+    (CU_add_test(my_test_suite, "Has value -bool", test_has_value) == NULL) ||
+    (CU_add_test(my_test_suite, "Has key -bool", test_has_key) == NULL) ||
     0
   )
     {
