@@ -187,24 +187,69 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht) {
     return values;
 }
 
-bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) {
 
-  for(int i = 0; i < No_Buckets; i++) {
-      entry_t *current = ht->buckets[i].next;
-      while(current != NULL) {
-        entry_t *next_entry = current->next;
-        char *str = current->value;
-        if (!strcmp(value, str)) {
-
-          return true;
-        }
-        current = next_entry;
-      }
-  }
-  return false;
+static bool key_equiv(int key, char *value_ignored, void *x)
+{
+    int *other_key_ptr = x;
+    int other_key = *other_key_ptr;
+    return key == other_key;
 }
 
-bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key) {
-  ioopm_option_t result = ioopm_hash_table_lookup(ht, key);
-  return result.success == true;
+static bool value_equiv(int key_ignored, char *value, void *x)
+{
+    return !strcmp(x, value);   
+}
+
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate *pred, void *arg)
+{
+    for(int i = 0; i < No_Buckets; i++) {
+        entry_t *current = ht->buckets[i].next; //.next för att current blir annars dummy:n
+        while(current != NULL) {
+            entry_t *next_entry = current->next;
+            if (pred(current->key, current->value, arg))
+            {
+                return true;
+            }
+            current = next_entry;
+        }
+    }
+    return false;
+}
+
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate *pred, void *arg)
+{
+    for(int i = 0; i < No_Buckets; i++) {
+        entry_t *current = ht->buckets[i].next; //.next för att current blir annars dummy:n
+        while(current != NULL) {
+            entry_t *next_entry = current->next;
+            if (!pred(current->key, current->value, arg))
+            {
+                return false;
+            }
+            current = next_entry;
+        }
+    }
+    return true;
+}
+
+void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function *apply_fun, void *arg)
+{
+    for(int i = 0; i < No_Buckets; i++) {
+        entry_t *current = ht->buckets[i].next; //.next för att current blir annars dummy:n
+        while(current != NULL) {
+            entry_t *next_entry = current->next;
+            apply_fun(current->key, &current->value, arg);
+            current = next_entry;
+        }
+    }
+}
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
+{
+    return ioopm_hash_table_any(ht, key_equiv, &key);
+}
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value) 
+{
+    return ioopm_hash_table_any(ht, value_equiv, value);
 }

@@ -276,6 +276,55 @@ void test_has_key() {
   ioopm_hash_table_destroy(ht);
 }
 
+static bool test_pred(int key, char *value_ignored, void *ignored){
+    return key == 5;
+}
+void test_for_all() {
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    int key1 = 5;
+    int key2 = 5;
+    int key3 = 6;
+    bool result = ioopm_hash_table_all(ht, test_pred, NULL);
+    CU_ASSERT_TRUE(result);                                // Inga element i listan.
+    ioopm_hash_table_insert(ht, key1, "5");
+    result = ioopm_hash_table_all(ht, test_pred, NULL);
+    CU_ASSERT_TRUE(result);                                 // en key och den matchar pred
+    result = ioopm_hash_table_all(ht, test_pred, NULL);
+    ioopm_hash_table_insert(ht, key2, "5");                 // Två keys och de matchar pred
+    CU_ASSERT_TRUE(result);
+    ioopm_hash_table_insert(ht, key3, "6");
+    result = ioopm_hash_table_all(ht, test_pred, NULL); 
+    CU_ASSERT_FALSE(result);                                // En key som inte matchar = False
+    ioopm_hash_table_destroy(ht);
+}
+static void test_apply_fun(int key, char **value, void *ignored){
+    key = key * 10;
+    *value = "tiotal";
+}
+static bool value_equiv(int key_ignored, char *value, void *x)
+{
+    return !strcmp(x, value);   
+}
+void test_apply_to_all() {
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    ioopm_hash_table_insert(ht, 1, "ental");
+    ioopm_hash_table_insert(ht, 2, "ental");
+    ioopm_hash_table_insert(ht, 3, "ental");
+    ioopm_hash_table_insert(ht, 4, "ental");
+    ioopm_hash_table_insert(ht, 5, "ental");
+    bool value = ioopm_hash_table_all(ht, value_equiv, "ental");
+    CU_ASSERT_TRUE(value);
+    ioopm_hash_table_apply_to_all(ht, test_apply_fun, NULL);
+    value = ioopm_hash_table_all(ht, value_equiv, "ental");
+    CU_ASSERT_FALSE(value);
+    value = ioopm_hash_table_all(ht, value_equiv, "tiotal");
+    CU_ASSERT_TRUE(value);
+    ioopm_hash_table_insert(ht, 7, "tusental");
+    value = ioopm_hash_table_all(ht, value_equiv, "tiotal");
+    CU_ASSERT_FALSE(value);
+    ioopm_hash_table_destroy(ht);
+}
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -308,6 +357,8 @@ int main() {
     (CU_add_test(my_test_suite, "Keys and values", test_keys_and_values) == NULL) ||
     (CU_add_test(my_test_suite, "Has value -bool", test_has_value) == NULL) ||
     (CU_add_test(my_test_suite, "Has key -bool", test_has_key) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for all -bool", test_for_all) == NULL) ||
+    (CU_add_test(my_test_suite, "Test apply to all -bool", test_apply_to_all) == NULL) ||
     0
   )
     {
