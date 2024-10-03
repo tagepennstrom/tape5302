@@ -297,9 +297,8 @@ void test_for_all() {
     CU_ASSERT_FALSE(result);                                // En key som inte matchar = False
     ioopm_hash_table_destroy(ht);
 }
-static void test_apply_fun(int key, char **value, void *ignored){
-    key = key * 10;
-    *value = "tiotal";
+static void test_apply_fun(int key, char **value, void *new_value){
+    *value = new_value;
 }
 static bool value_equiv(int key_ignored, char *value, void *x)
 {
@@ -314,7 +313,7 @@ void test_apply_to_all() {
     ioopm_hash_table_insert(ht, 5, "ental");
     bool value = ioopm_hash_table_all(ht, value_equiv, "ental");
     CU_ASSERT_TRUE(value);
-    ioopm_hash_table_apply_to_all(ht, test_apply_fun, NULL);
+    ioopm_hash_table_apply_to_all(ht, test_apply_fun, "tiotal");
     value = ioopm_hash_table_all(ht, value_equiv, "ental");
     CU_ASSERT_FALSE(value);
     value = ioopm_hash_table_all(ht, value_equiv, "tiotal");
